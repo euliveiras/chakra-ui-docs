@@ -2,3 +2,206 @@
 id: progress
 scope: theming
 ---
+
+The `Progress` component is a multipart component. The styling needs to be
+applied to each part specifically.
+
+> To learn more about styling multipart components, visit the
+> [Component Style](/docs/styled-system/component-style#styling-multipart-components)
+> page.
+
+## Anatomy
+
+- A: `track`
+- B: `filled track`
+
+<AspectRatio ratio={16 / 9}>
+</AspectRatio>
+
+## Theming properties
+
+The properties that affect the theming of the `Progress` component are:
+
+- `colorScheme`: The color scheme of the component. Defaults to `blue`.
+- `size`: The size of the component. Defaults to `md`.
+
+## Theming utilities
+
+- `createMultiStyleConfigHelpers`: a function that returns a set of utilities
+  for creating style configs for a multipart component (`definePartsStyle` and
+  `defineMultiStyleConfig`).
+- `definePartsStyle`: a function used to create multipart style objects.
+- `defineMultiStyleConfig`: a function used to define the style configuration
+  for a multipart component.
+
+```jsx live=false
+import { inputAnatomy } from '@chakra-ui/anatomy'
+import { createMultiStyleConfigHelpers } from '@chakra-ui/react'
+
+const { definePartsStyle, defineMultiStyleConfig } =
+  createMultiStyleConfigHelpers(inputAnatomy.keys)
+```
+
+## Customizing the default theme
+
+```jsx live=false
+import { progressAnatomy } from '@chakra-ui/anatomy'
+import { createMultiStyleConfigHelpers } from '@chakra-ui/react'
+
+const { definePartsStyle, defineMultiStyleConfig } =
+  createMultiStyleConfigHelpers(progressAnatomy.keys)
+
+const baseStyle = definePartsStyle({
+  // define the part you're going to style
+  track: {
+    bg: 'blue.50', // change the color of track
+  },
+  filledTrack: {
+    bgColor: 'pink.500', // change the color of filled track
+    bgGradient: 'linear(to-r, blue.400, pink.500)', // change filled track gradient color 
+  },
+})
+
+export const inputTheme = defineMultiStyleConfig({ baseStyle })
+```
+
+After customizing the progress theme, we can import it in our theme file and add it
+in the `components` property:
+
+```jsx live=false
+import { extendTheme } from '@chakra-ui/react'
+import { progressTheme } from './components/input.ts'
+
+export const theme = extendTheme({
+  components: { Progress: progressTheme },
+})
+```
+
+> This is a crucial step to make sure that any changes that we make to the input
+> theme are applied.
+
+## Adding a custom size
+
+Let's assume we want to include an extra large input size. Here's how we can do
+that:
+
+```jsx live=false
+import { inputAnatomy } from '@chakra-ui/anatomy'
+import { createMultiStyleConfigHelpers, defineStyle } from '@chakra-ui/react'
+
+const { definePartsStyle, defineMultiStyleConfig } =
+  createMultiStyleConfigHelpers(inputAnatomy.keys)
+
+const xl = defineStyle({
+  fontSize: 'lg',
+  px: '4',
+  h: '12',
+})
+
+const sizes = {
+  xl: definePartsStyle({ field: xl, addon: xl }),
+}
+
+export const inputTheme = defineMultiStyleConfig({ sizes })
+
+// Now we can use the new `xl` size
+<Input size="xl" ... />
+```
+
+Every time you're adding anything new to the theme, you'd need to run the CLI
+command to get proper autocomplete in your IDE. You can learn more about the CLI
+tool [here](/docs/styled-system/cli).
+
+## Adding a custom variant
+
+Let's assume we want to include a custom pill variant. Here's how we can do
+that:
+
+```jsx live=false
+import { inputAnatomy } from '@chakra-ui/anatomy'
+import { createMultiStyleConfigHelpers, defineStyle } from '@chakra-ui/react'
+
+const { definePartsStyle, defineMultiStyleConfig } =
+  createMultiStyleConfigHelpers(inputAnatomy.keys)
+
+const pill = definePartsStyle({
+  field: {
+    border: '1px solid',
+    borderColor: 'gray.200',
+    background: 'gray.50',
+    borderRadius: 'full',
+
+    // Let's also provide dark mode alternatives
+    _dark: {
+      borderColor: 'gray.600',
+      background: 'gray.800',
+    },
+  },
+  addon: {
+    border: '1px solid',
+    borderColor: 'gray.200',
+    background: 'gray.200',
+    borderRadius: 'full',
+    color: 'gray.500',
+
+    _dark: {
+      borderColor: 'gray.600',
+      background: 'gray.600',
+      color: 'gray.400',
+    },
+  },
+})
+
+export const inputTheme = defineMultiStyleConfig({
+  variants: { pill },
+})
+
+// Now we can use the new `pill` variant
+<Input variant="pill" ... />
+```
+
+## Changing the default properties
+
+Let's assume we want to change the default size and variant of every input in
+our app. Here's how we can do that:
+
+```jsx live=false
+import { inputAnatomy } from '@chakra-ui/anatomy'
+import { createMultiStyleConfigHelpers, defineStyle } from '@chakra-ui/react'
+
+const { defineMultiStyleConfig } = createMultiStyleConfigHelpers(
+  inputAnatomy.keys,
+)
+
+export const inputTheme = defineMultiStyleConfig({
+  defaultProps: {
+    size: 'xl',
+    variant: 'pill',
+  },
+})
+
+// This saves you time, instead of manually setting the size and variant every time you use an input:
+<Input size="xl" variant="pill" ... />
+```
+
+## Showcase
+
+import {
+  App,
+  Index,
+  InputTheme,
+} from 'configs/sandpack-contents/component-theming/input'
+
+<SandpackEmbed
+  files={{
+    '/theme/components/Input.ts': InputTheme,
+    '/App.tsx': App,
+    '/index.tsx': {
+      code: Index,
+      hidden: true,
+    },
+  }}
+  dependencies={{
+    'react-icons': '^4.4.0',
+  }}
+/>
